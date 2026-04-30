@@ -19,7 +19,6 @@ body{
     height: 500px;
     width: 450px;
     border-radius: 15px;
-    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.841);
     box-shadow: 
         inset 3px 3px 5px #ffffff4d,
         inset -2px -2px 5px #ffffff80;
@@ -93,6 +92,10 @@ body{
   transform: translateY(2px);
 }
 
+.btn:hover {
+  cursor: pointer;
+}
+
 .special-btn, .oprt{
   background-color: #2c3e50;
   color: #ffffff;
@@ -104,7 +107,11 @@ body{
   font-size: 30px;
 }
 
-.num-zero {
+.backspace{
+  padding-bottom: 5px;
+}
+
+.zero {
   grid-column: span 2;
   font-size: 25px;
 }
