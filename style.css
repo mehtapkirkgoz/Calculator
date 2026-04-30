@@ -1,0 +1,120 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #032473;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #00284e 100%);
+}
+
+.calc-container{
+    background-color: #354F86;
+    height: 500px;
+    width: 450px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.841);
+    box-shadow: 
+        inset 3px 3px 5px #ffffff4d,
+        inset -2px -2px 5px #ffffff80;
+}
+
+.head-container{
+    height: 130px;
+    width: auto;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 15px;
+    background-color: #ffffff;
+    box-shadow: 
+        inset 3px 3px 3px #0000004d,
+        inset -2px -2px 3px #00000080;
+}
+
+.display{
+    background-color: #ffffff;
+    height: 110px;
+    width: auto;
+    border-radius: 15px;
+    box-shadow: 
+        inset 3px 3px 3px #b9b0b04d,
+        inset -2px -2px 3px #bab2b280;
+    
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 5px;
+    padding: 5px;
+}
+
+.display-controls, .display-current{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: #000000;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  gap: 10px;
+  height: 340px;
+  width: auto;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: #ffffff;
+  box-shadow: 
+    inset 5px 5px 3px #7671714d,
+    inset -2px -2px 5px #58525280;
+}
+
+.btn {
+  border: none;
+  border-radius: 20px;
+  transition: all 0.2s ease-out;
+  background-color: #13131331;
+  font-size: medium;
+  box-shadow: 
+    3px 3px 5px #0000004d,
+    -3px -3px 5px #ffffff80;
+}
+
+.btn:active {
+  box-shadow: 
+    inset 3px 3px 5px #0000004d,
+    inset -3px -3px 5px #ffffff80;
+  transform: translateY(2px);
+}
+
+.special-btn, .oprt{
+  background-color: #2c3e50;
+  color: #ffffff;
+}
+
+.equals, .backspace{
+  background-color: #e67e22;
+  color: #ffffff;
+  font-size: large;
+}
+
+.num-zero {
+  grid-column: span 2;
+  font-size: large;
+}
+
+.decimal{
+    font-size: larger ;
+}
+
+.multiply{
+  padding-top: 8px;
+}
