@@ -63,3 +63,13 @@ function updateDisplay() {
   displayCurrent.textContent = current || "0";
   displayControls.textContent = `${firstValue} ${currentOperator || ""}`;
 }
+
+function appendNumber(num) {
+  if (shouldReset) {
+    current = "";
+    shouldReset = false;
+  }
+
+  current += num;
+  updateDisplay();
+}
