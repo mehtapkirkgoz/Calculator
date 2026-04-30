@@ -73,3 +73,18 @@ function appendNumber(num) {
   current += num;
   updateDisplay();
 }
+
+function chooseOperator(op) {
+  if (current === "") return;
+
+  if (firstValue && currentOperator) {
+    firstValue = operate(firstValue, currentOperator, current);
+  } else {
+    firstValue = current;
+  }
+
+  currentOperator = op;
+  current = "";
+
+  updateDisplay();
+}
