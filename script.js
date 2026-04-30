@@ -32,3 +32,29 @@ function divide(a, b) {
   if (b === 0) return "Error";
   return a / b;
 }
+
+function operate(a, operator, b) {
+  a = Number(a);
+  b = Number(b);
+
+  let result;
+
+  switch (operator) {
+    case "+":
+      result = add(a, b);
+      break;
+    case "-":
+      result = subtract(a, b);
+      break;
+    case "*":
+      result = multiply(a, b);
+      break;
+    case "/":
+      result = divide(a, b);
+      break;
+    default:
+      return null;
+  }
+
+  return Math.round(result * 100000) / 100000;
+}
