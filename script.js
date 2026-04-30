@@ -58,3 +58,8 @@ function operate(a, operator, b) {
 
   return Math.round(result * 100000) / 100000;
 }
+
+function updateDisplay() {
+  displayCurrent.textContent = current || "0";
+  displayControls.textContent = `${firstValue} ${currentOperator || ""}`;
+}
