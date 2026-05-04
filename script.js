@@ -15,31 +15,34 @@ let firstValue = "";
 let secondValue = "";
 let currentOperator = null;
 let shouldReset = false;
+let current = "";
 
-function add(a, b) {
+function add(a, b){
   return a + b;
 }
 
-function subtract(a, b) {
+function subtract(a, b){
   return a - b;
 }
 
-function multiply(a, b) {
+function multiply(a, b){
   return a * b;
 }
 
-function divide(a, b) {
-  if (b === 0) return "Error";
+function divide(a, b){
+  if(b === 0){
+    return "Error";
+  }
   return a / b;
 }
 
-function operate(a, operator, b) {
+function operate(a, operator, b){
   a = Number(a);
   b = Number(b);
 
   let result;
 
-  switch (operator) {
+  switch(operator){
     case "+":
       result = add(a, b);
       break;
@@ -59,13 +62,13 @@ function operate(a, operator, b) {
   return Math.round(result * 100000) / 100000;
 }
 
-function updateDisplay() {
+function updateDisplay(){
   displayCurrent.textContent = current || "0";
   displayControls.textContent = `${firstValue} ${currentOperator || ""}`;
 }
 
-function appendNumber(num) {
-  if (shouldReset) {
+function appendNumber(num){
+  if(shouldReset){
     current = "";
     shouldReset = false;
   }
@@ -74,12 +77,12 @@ function appendNumber(num) {
   updateDisplay();
 }
 
-function chooseOperator(op) {
-  if (current === "") return;
+function chooseOperator(op){
+  if(current === "") return;
 
-  if (firstValue && currentOperator) {
+  if(firstValue && currentOperator){
     firstValue = operate(firstValue, currentOperator, current);
-  } else {
+  }else{
     firstValue = current;
   }
 
