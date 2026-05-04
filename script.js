@@ -91,3 +91,20 @@ function chooseOperator(op){
 
   updateDisplay();
 }
+
+function equals(){
+  if(!firstValue || !current || !currentOperator) return;
+
+  secondValue = current;
+
+  current = operate(firstValue, currentOperator, secondValue);
+
+  displayControls.textContent = `${firstValue} ${currentOperator} ${secondValue} =`;
+
+  firstValue = "";
+  currentOperator = null;
+  shouldReset = true;
+
+  updateDisplay();
+}
+
