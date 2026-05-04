@@ -108,3 +108,12 @@ function equals(){
   updateDisplay();
 }
 
+function clearAll(){
+  firstValue = "";
+  current = "";
+  currentOperator = null;
+
+  displayControls.textContent = "";
+  updateDisplay();
+}
+
