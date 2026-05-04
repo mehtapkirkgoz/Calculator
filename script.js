@@ -117,3 +117,20 @@ function clearAll(){
   updateDisplay();
 }
 
+function backspace(){
+  current = current.slice(0, -1);
+  updateDisplay();
+}
+
+function appendDecimal(){
+
+  if(current.includes(".")) return;
+
+  if(current === ""){
+    current = "0.";
+  }else{
+    current += ".";
+  }
+
+  updateDisplay();
+}
