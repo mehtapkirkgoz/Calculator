@@ -64,7 +64,7 @@ function operate(a, operator, b){
 
 function updateDisplay(){
   displayCurrent.textContent = current || "0";
-  displayControls.textContent = `${firstValue} ${currentOperator || ""} ${current}`;;
+  displayControls.textContent = `${firstValue} ${currentOperator || ""} ${current}`;
 }
 
 function appendNumber(num){
@@ -139,3 +139,9 @@ function appendDecimal(){
 
   updateDisplay();
 }
+
+numberButtons.forEach((button) =>{
+  button.addEventListener("click", () =>{
+    appendNumber(button.textContent);
+  });
+});
