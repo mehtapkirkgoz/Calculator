@@ -157,3 +157,5 @@ equalsButton.addEventListener("click", equals);
 clearAllButton.addEventListener("click", clearAll);
 
 backspaceButton.addEventListener("click", backspace);
+
+decimalButton.addEventListener("click", appendDecimal);
