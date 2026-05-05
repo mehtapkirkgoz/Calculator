@@ -146,8 +146,10 @@ numberButtons.forEach((button) =>{
   });
 });
 
-operatorButtons.forEach((button) => {
-  button.addEventListener("click", () => {
+operatorButtons.forEach((button) =>{
+  button.addEventListener("click", () =>{
     chooseOperator(button.textContent);
   });
 });
+
+equalsButton.addEventListener("click", equals);
