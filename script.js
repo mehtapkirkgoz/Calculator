@@ -64,7 +64,7 @@ function operate(a, operator, b){
 
 function updateDisplay(){
   displayCurrent.textContent = current || "0";
-  displayControls.textContent = `${firstValue} ${currentOperator || ""}`;
+  displayControls.textContent = `${firstValue} ${currentOperator || ""} ${current}`;;
 }
 
 function appendNumber(num){
@@ -78,7 +78,12 @@ function appendNumber(num){
 }
 
 function chooseOperator(op){
-  if(current === "") return;
+
+  if(current === ""){
+    currentOperator = op;
+    updateDisplay();
+    return;
+  }
 
   if(firstValue && currentOperator){
     firstValue = operate(firstValue, currentOperator, current);
