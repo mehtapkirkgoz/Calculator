@@ -155,3 +155,5 @@ operatorButtons.forEach((button) =>{
 equalsButton.addEventListener("click", equals);
 
 clearAllButton.addEventListener("click", clearAll);
+
+backspaceButton.addEventListener("click", backspace);
