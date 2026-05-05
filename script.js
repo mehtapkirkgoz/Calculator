@@ -145,3 +145,9 @@ numberButtons.forEach((button) =>{
     appendNumber(button.textContent);
   });
 });
+
+operatorButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    chooseOperator(button.textContent);
+  });
+});
