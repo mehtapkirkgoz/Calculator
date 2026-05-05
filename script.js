@@ -64,7 +64,6 @@ function operate(a, operator, b){
 
 function updateDisplay(){
   displayCurrent.textContent = current || "0";
-  displayControls.textContent = `${firstValue} ${currentOperator || ""} ${current}`;
 }
 
 function appendNumber(num){
@@ -81,20 +80,30 @@ function chooseOperator(op){
 
   if(current === ""){
     currentOperator = op;
-    updateDisplay();
+
+    displayControls.textContent = `${firstValue} ${currentOperator}`;
+
     return;
   }
 
   if(firstValue && currentOperator){
-    firstValue = operate(firstValue, currentOperator, current);
+
+    secondValue = current;
+
+    let result = operate(firstValue, currentOperator, secondValue);
+
+    firstValue = result;
+    current = result.toString();
   }else{
     firstValue = current;
   }
 
   currentOperator = op;
-  current = "";
+
+  displayControls.textContent = `${firstValue} ${currentOperator}`;
 
   updateDisplay();
+  shouldReset = true;
 }
 
 function equals(){
