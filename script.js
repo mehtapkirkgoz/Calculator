@@ -10,6 +10,7 @@ let clearButton = document.querySelector('.clear');
 let clearAllButton = document.querySelector('.clear-all');
 let backspaceButton = document.querySelector('.backspace');
 let decimalButton = document.querySelector('.decimal');
+let powerButton = document.querySelector('.power');
 
 let firstValue = "";
 let secondValue = "";
@@ -197,6 +198,17 @@ function sqrt(){
   updateDisplay();
 }
 
+function power(){
+
+  if(current === "") return;
+
+  let result = Math.pow(Number(current), 2);
+
+  current = roundResult(result).toString();
+
+  updateDisplay();
+}
+
 numberButtons.forEach((button) =>{
   button.addEventListener("click", () =>{
     appendNumber(button.textContent);
@@ -222,3 +234,5 @@ percentButton.addEventListener("click", percent);
 inverseButton.addEventListener("click", inverse);
 
 sqrtButton.addEventListener("click", sqrt);
+
+powerButton.addEventListener("click", power);
