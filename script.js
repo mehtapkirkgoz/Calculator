@@ -116,6 +116,7 @@ function equals(){
   displayControls.textContent = `${firstValue} ${currentOperator} ${secondValue} =`;
 
   firstValue = "";
+  secondValue = "";
   currentOperator = null;
   shouldReset = true;
 
@@ -149,6 +150,15 @@ function appendDecimal(){
   updateDisplay();
 }
 
+function percent(){
+
+  if(current === "") return;
+
+  current = (Number(current) / 100).toString();
+
+  updateDisplay();
+}
+
 numberButtons.forEach((button) =>{
   button.addEventListener("click", () =>{
     appendNumber(button.textContent);
@@ -168,3 +178,5 @@ clearAllButton.addEventListener("click", clearAll);
 backspaceButton.addEventListener("click", backspace);
 
 decimalButton.addEventListener("click", appendDecimal);
+
+percentButton.addEventListener("click", percent);
