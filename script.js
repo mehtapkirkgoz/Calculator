@@ -159,6 +159,23 @@ function percent(){
   updateDisplay();
 }
 
+function inverse(){
+
+  if(current === "") return;
+
+  if(Number(current) === 0){
+    current = "Error";
+    updateDisplay();
+    return;
+  }
+
+  current = (1 / Number(current)).toString();
+
+  current = (Math.round(current * 100000) / 100000).toString();
+
+  updateDisplay();
+}
+
 numberButtons.forEach((button) =>{
   button.addEventListener("click", () =>{
     appendNumber(button.textContent);
@@ -180,3 +197,5 @@ backspaceButton.addEventListener("click", backspace);
 decimalButton.addEventListener("click", appendDecimal);
 
 percentButton.addEventListener("click", percent);
+
+inverseButton.addEventListener("click", inverse);
