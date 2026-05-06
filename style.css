@@ -23,6 +23,7 @@ body{
       10px 10px 10px 15px rgba(0, 0, 0, 0.3),
       inset 3px 3px 5px #ffffff4d,
       inset -2px -2px 5px #ffffff80;
+    user-select: none;
 }
 
 .head-container{
