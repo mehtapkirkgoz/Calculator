@@ -176,6 +176,23 @@ function inverse(){
   updateDisplay();
 }
 
+function sqrt(){
+
+  if(current === "") return;
+
+  if(Number(current) < 0){
+    current = "Error";
+    updateDisplay();
+    return;
+  }
+
+  current = Math.sqrt(Number(current)).toString();
+
+  current = (Math.round(current * 100000) / 100000).toString();
+
+  updateDisplay();
+}
+
 numberButtons.forEach((button) =>{
   button.addEventListener("click", () =>{
     appendNumber(button.textContent);
@@ -199,3 +216,5 @@ decimalButton.addEventListener("click", appendDecimal);
 percentButton.addEventListener("click", percent);
 
 inverseButton.addEventListener("click", inverse);
+
+sqrtButton.addEventListener("click", sqrt);
