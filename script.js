@@ -181,7 +181,7 @@ function inverse(){
     return;
   }
 
-  current = (1 / Number(current)).toString();
+  let result = 1 / Number(current);
 
   current = roundResult(result).toString();
 
@@ -198,7 +198,7 @@ function sqrt(){
     return;
   }
 
-  current = Math.sqrt(Number(current)).toString();
+  let result = Math.sqrt(Number(current));
 
   current = roundResult(result).toString();
 
