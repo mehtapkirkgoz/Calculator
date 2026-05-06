@@ -133,6 +133,13 @@ function clearAll(){
   updateDisplay();
 }
 
+function clearCurrent(){
+  if(shouldReset) return;
+  current = "";
+
+  updateDisplay();
+}
+
 function backspace(){
   current = current.slice(0, -1);
   updateDisplay();
@@ -236,3 +243,5 @@ inverseButton.addEventListener("click", inverse);
 sqrtButton.addEventListener("click", sqrt);
 
 powerButton.addEventListener("click", power);
+
+clearButton.addEventListener("click", clearCurrent);
