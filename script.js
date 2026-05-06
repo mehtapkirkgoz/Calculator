@@ -59,7 +59,7 @@ function operate(a, operator, b){
       return null;
   }
 
-  return Math.round(result * 100000) / 100000;
+  return roundResult(result);
 }
 
 function updateDisplay(){
@@ -137,6 +137,10 @@ function backspace(){
   updateDisplay();
 }
 
+function roundResult(number){
+  return Math.round(number * 100000) / 100000;
+}
+
 function appendDecimal(){
 
   if(current.includes(".")) return;
@@ -171,7 +175,7 @@ function inverse(){
 
   current = (1 / Number(current)).toString();
 
-  current = (Math.round(current * 100000) / 100000).toString();
+  current = roundResult(result).toString();
 
   updateDisplay();
 }
@@ -188,7 +192,7 @@ function sqrt(){
 
   current = Math.sqrt(Number(current)).toString();
 
-  current = (Math.round(current * 100000) / 100000).toString();
+  current = roundResult(result).toString();
 
   updateDisplay();
 }
