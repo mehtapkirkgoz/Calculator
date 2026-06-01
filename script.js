@@ -89,6 +89,7 @@ function appendNumber(num){
 }
 
 function chooseOperator(op){
+  if(current === "Error") return;
 
   if(current === ""){
     currentOperator = op;
@@ -103,6 +104,16 @@ function chooseOperator(op){
     secondValue = current;
 
     let result = operate(firstValue, currentOperator, secondValue);
+    if(result === "Error"){
+      current = "Error";
+
+      firstValue = "";
+      secondValue = "";
+      currentOperator = null;
+
+      updateDisplay();
+      return;
+    }
 
     firstValue = result;
     current = result.toString();
