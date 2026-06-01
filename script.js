@@ -68,12 +68,23 @@ function updateDisplay(){
 }
 
 function appendNumber(num){
+  if(current === "Error"){
+    current = "";
+  }
+
   if(shouldReset){
     current = "";
     shouldReset = false;
   }
 
-  current += num;
+  if(current.length >= 28) return;
+
+  if(current === "0"){
+    current = num;
+  }else{
+    current += num;
+  }
+
   updateDisplay();
 }
 
