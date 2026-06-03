@@ -1,16 +1,16 @@
-let displayControls = document.querySelector('.display-controls')
-let displayCurrent = document.querySelector('.display-current');
-let numberButtons = document.querySelectorAll('.num');
-let operatorButtons = document.querySelectorAll('.oprt');
-let percentButton = document.querySelector('.percent');
-let inverseButton = document.querySelector('.inverse');
-let sqrtButton = document.querySelector('.sqrt');
-let equalsButton = document.querySelector('.equals');
-let clearButton = document.querySelector('.clear');
-let clearAllButton = document.querySelector('.clear-all');
-let backspaceButton = document.querySelector('.backspace');
-let decimalButton = document.querySelector('.decimal');
-let powerButton = document.querySelector('.power');
+const displayControls = document.querySelector(".display-controls");
+const displayCurrent = document.querySelector(".display-current");
+const numberButtons = document.querySelectorAll(".num");
+const operatorButtons = document.querySelectorAll(".oprt");
+const percentButton = document.querySelector(".percent");
+const inverseButton = document.querySelector(".inverse");
+const sqrtButton = document.querySelector(".sqrt");
+const equalsButton = document.querySelector(".equals");
+const clearButton = document.querySelector(".clear");
+const clearAllButton = document.querySelector(".clear-all");
+const backspaceButton = document.querySelector(".backspace");
+const decimalButton = document.querySelector(".decimal");
+const powerButton = document.querySelector(".power");
 
 let firstValue = "";
 let secondValue = "";
@@ -34,7 +34,12 @@ function divide(a, b){
   if(b === 0){
     return "Error";
   }
+
   return a / b;
+}
+
+function roundResult(number){
+  return Math.round(number * 100000) / 100000;
 }
 
 function operate(a, operator, b){
@@ -60,6 +65,10 @@ function operate(a, operator, b){
       return null;
   }
 
+  if(result === "Error"){
+    return "Error";
+  }
+
   return roundResult(result);
 }
 
@@ -67,17 +76,26 @@ function updateDisplay(){
   displayCurrent.textContent = current || "0";
 }
 
-function appendNumber(num){
-  if(current === "Error"){
+function resetCalculatorError(){
+  if(current === "Error") {
     current = "";
+    firstValue = "";
+    secondValue = "";
+    currentOperator = null;
+    shouldReset = false;
+    displayControls.textContent = "";
   }
+}
+
+function appendNumber(num){
+  resetCalculatorError();
 
   if(shouldReset){
     current = "";
     shouldReset = false;
   }
 
-  if(current.length >= 28) return;
+  if(current.length >= 15) return;
 
   if(current === "0"){
     current = num;
@@ -88,90 +106,13 @@ function appendNumber(num){
   updateDisplay();
 }
 
-function chooseOperator(op){
-  if(current === "Error") return;
-
-  if(current === ""){
-    currentOperator = op;
-
-    displayControls.textContent = `${firstValue} ${currentOperator}`;
-
-    return;
-  }
-
-  if(firstValue && currentOperator){
-
-    secondValue = current;
-
-    let result = operate(firstValue, currentOperator, secondValue);
-    if(result === "Error"){
-      current = "Error";
-
-      firstValue = "";
-      secondValue = "";
-      currentOperator = null;
-
-      updateDisplay();
-      return;
-    }
-
-    firstValue = result;
-    current = result.toString();
-  }else{
-    firstValue = current;
-  }
-
-  currentOperator = op;
-
-  displayControls.textContent = `${firstValue} ${currentOperator}`;
-
-  updateDisplay();
-  shouldReset = true;
-}
-
-function equals(){
-  if(!firstValue || !current || !currentOperator) return;
-
-  secondValue = current;
-
-  current = operate(firstValue, currentOperator, secondValue);
-
-  displayControls.textContent = `${firstValue} ${currentOperator} ${secondValue} =`;
-
-  firstValue = "";
-  secondValue = "";
-  currentOperator = null;
-  shouldReset = true;
-
-  updateDisplay();
-}
-
-function clearAll(){
-  firstValue = "";
-  current = "";
-  currentOperator = null;
-
-  displayControls.textContent = "";
-  updateDisplay();
-}
-
-function clearCurrent(){
-  if(shouldReset) return;
-  current = "";
-
-  updateDisplay();
-}
-
-function backspace(){
-  current = current.slice(0, -1);
-  updateDisplay();
-}
-
-function roundResult(number){
-  return Math.round(number * 100000) / 100000;
-}
-
 function appendDecimal(){
+  resetCalculatorError();
+
+  if(shouldReset){
+    current = "";
+    shouldReset = false;
+  }
 
   if(current.includes(".")) return;
 
@@ -184,57 +125,141 @@ function appendDecimal(){
   updateDisplay();
 }
 
+function chooseOperator(op){
+  if(current === "Error") return;
+
+  if(current === "" && firstValue === "") return;
+
+  if(current === "" && firstValue !== ""){
+    currentOperator = op;
+    displayControls.textContent = `${firstValue} ${currentOperator}`;
+    return;
+  }
+
+  if(firstValue !== "" && currentOperator !== null && !shouldReset){
+    secondValue = current;
+
+    let result = operate(firstValue, currentOperator, secondValue);
+
+    if(result === "Error"){
+      current = "Error";
+      firstValue = "";
+      secondValue = "";
+      currentOperator = null;
+      shouldReset = false;
+      displayControls.textContent = "";
+      updateDisplay();
+      return;
+    }
+
+    firstValue = result.toString();
+    current = firstValue;
+  }else{
+    firstValue = current;
+  }
+
+  currentOperator = op;
+  displayControls.textContent = `${firstValue} ${currentOperator}`;
+  shouldReset = true;
+
+  updateDisplay();
+}
+
+function equals(){
+  if(firstValue === "" || current === "" || currentOperator === null) return;
+  if(current === "Error") return;
+
+  secondValue = current;
+
+  let result = operate(firstValue, currentOperator, secondValue);
+
+  displayControls.textContent = `${firstValue} ${currentOperator} ${secondValue} =`;
+
+  if(result === "Error"){
+    current = "Error";
+    firstValue = "";
+    secondValue = "";
+    currentOperator = null;
+    shouldReset = false;
+    updateDisplay();
+    return;
+  }
+
+  current = result.toString();
+
+  firstValue = "";
+  secondValue = "";
+  currentOperator = null;
+  shouldReset = true;
+
+  updateDisplay();
+}
+
+function clearAll(){
+  firstValue = "";
+  secondValue = "";
+  current = "";
+  currentOperator = null;
+  shouldReset = false;
+
+  displayControls.textContent = "";
+
+  updateDisplay();
+}
+
+function clearCurrent(){
+  current = "";
+  shouldReset = false;
+  updateDisplay();
+}
+
+function backspace(){
+  if(current === "Error") return;
+  if(shouldReset) return;
+
+  current = current.slice(0, -1);
+  updateDisplay();
+}
+
 function percent(){
+  if(current === "" || current === "Error") return;
 
-  if(current === "") return;
-
-  current = (Number(current) / 100).toString();
-
+  current = roundResult(Number(current) / 100).toString();
   updateDisplay();
 }
 
 function inverse(){
-
-  if(current === "") return;
+  if(current === "" || current === "Error") return;
 
   if(Number(current) === 0){
     current = "Error";
+    displayControls.textContent = "";
     updateDisplay();
     return;
   }
 
-  let result = 1 / Number(current);
-
-  current = roundResult(result).toString();
-
+  current = roundResult(1 / Number(current)).toString();
   updateDisplay();
 }
 
 function sqrt(){
-
-  if(current === "") return;
+  if(current === "" || current === "Error") return;
 
   if(Number(current) < 0){
     current = "Error";
+    displayControls.textContent = "";
     updateDisplay();
     return;
   }
 
-  let result = Math.sqrt(Number(current));
-
-  current = roundResult(result).toString();
-
+  current = roundResult(Math.sqrt(Number(current))).toString();
   updateDisplay();
 }
 
 function power(){
+  if(current === "" || current === "Error") return;
 
-  if(current === "") return;
-
-  let result = Math.pow(Number(current), 2);
-
-  current = roundResult(result).toString();
-
+  current = roundResult(Math.pow(Number(current), 2)).toString();
   updateDisplay();
 }
 
@@ -251,19 +276,13 @@ operatorButtons.forEach((button) =>{
 });
 
 equalsButton.addEventListener("click", equals);
-
 clearAllButton.addEventListener("click", clearAll);
-
+clearButton.addEventListener("click", clearCurrent);
 backspaceButton.addEventListener("click", backspace);
-
 decimalButton.addEventListener("click", appendDecimal);
-
 percentButton.addEventListener("click", percent);
-
 inverseButton.addEventListener("click", inverse);
-
 sqrtButton.addEventListener("click", sqrt);
-
 powerButton.addEventListener("click", power);
 
-clearButton.addEventListener("click", clearCurrent);
+updateDisplay();
