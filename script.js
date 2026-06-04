@@ -17,6 +17,8 @@ let secondValue = "";
 let currentOperator = null;
 let shouldReset = false;
 let current = "";
+let lastOperator = null;
+let lastSecondValue = "";
 
 function add(a, b){
   return a + b;
@@ -166,10 +168,19 @@ function chooseOperator(op){
 }
 
 function equals(){
-  if(firstValue === "" || current === "" || currentOperator === null) return;
   if(current === "Error") return;
 
-  secondValue = current;
+  if(firstValue === "" && lastOperator !== null){
+    firstValue = current;
+    currentOperator = lastOperator;
+    secondValue = lastSecondValue;
+  } else {
+    if(firstValue === "" || currentOperator === null) return;
+    secondValue = current;
+  }
+
+  lastOperator = currentOperator;
+  lastSecondValue = secondValue;
 
   let result = operate(firstValue, currentOperator, secondValue);
 
@@ -186,9 +197,7 @@ function equals(){
   }
 
   current = result.toString();
-
   firstValue = "";
-  secondValue = "";
   currentOperator = null;
   shouldReset = true;
 
@@ -201,6 +210,8 @@ function clearAll(){
   current = "";
   currentOperator = null;
   shouldReset = false;
+  lastOperator = null;
+  lastSecondValue = "";
 
   displayControls.textContent = "";
 
@@ -208,6 +219,12 @@ function clearAll(){
 }
 
 function clearCurrent(){
+  if(shouldReset){
+    firstValue = "";
+    currentOperator = null;
+    displayControls.textContent = "";
+  }
+
   current = "";
   shouldReset = false;
   updateDisplay();
@@ -284,5 +301,15 @@ percentButton.addEventListener("click", percent);
 inverseButton.addEventListener("click", inverse);
 sqrtButton.addEventListener("click", sqrt);
 powerButton.addEventListener("click", power);
+
+document.addEventListener("keydown", (e) => {
+  if(e.key >= "0" && e.key <= "9") appendNumber(e.key);
+  else if(e.key === ".") appendDecimal();
+  else if(e.key === "+" || e.key === "-" || e.key === "*" || e.key === "/") chooseOperator(e.key);
+  else if(e.key === "Enter" || e.key === "=") equals();
+  else if(e.key === "Backspace") backspace();
+  else if(e.key === "Escape") clearAll();
+  else if(e.key === "%") percent();
+});
 
 updateDisplay();
