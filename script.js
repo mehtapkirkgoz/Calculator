@@ -97,7 +97,7 @@ function appendNumber(num){
     shouldReset = false;
   }
 
-  if(current.length >= 15) return;
+  if(current.length >= 32) return;
 
   if(current === "0"){
     current = num;
