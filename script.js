@@ -70,6 +70,10 @@ function clearError(){
 }
 
 function roundResult(number){
+  if(!Number.isFinite(number)){
+    return "Error";
+  }
+  
   return Math.round(number * 100000) / 100000;
 }
 
