@@ -20,7 +20,7 @@ const calculatorState = {
   current : "",
   lastOperator : null,
   lastSecondValue : "",
-  maxLength : 15
+  maxLength : 28
 };
 
 function add(a, b){
