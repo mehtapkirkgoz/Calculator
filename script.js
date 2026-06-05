@@ -112,35 +112,20 @@ function operate(a, operator, b){
 }
 
 function updateDisplay(){
-  displayCurrent.textContent = calculatorState.current || 0;
+  displayCurrent.textContent = calculatorState.current || "0";
 }
 
-function resetCalculatorError(){
-  if(calculatorState.current === "Error"){
-    calculatorState.current = 0;
-    calculatorState.firstValue = 0;
-    calculatorState.secondValue = 0;
-    calculatorState.currentOperator = null;
-    calculatorState.shouldReset = false;
-    displayControls.textContent = "";
-  }
-}
-
-function appendNumber(num){
-  resetCalculatorError();
+function inputNumber(num){
+  clearError();
 
   if(calculatorState.shouldReset){
-    calculatorState.current = 0;
+    calculatorState.current = "";
     calculatorState.shouldReset = false;
   }
 
-  if(num == 1){
-    if(calculatorState.current.length >= 32) return;
-  }else{
-    if(calculatorState.current.length >= 27) return;
-  }
+  if(calculatorState.current.length >= calculatorState.maxLength) return;
 
-  if(calculatorState.current === 0){
+  if(calculatorState.current === "0" && num !== "."){
     calculatorState.current = num;
   }else{
     calculatorState.current += num;
@@ -149,7 +134,7 @@ function appendNumber(num){
   updateDisplay();
 }
 
-function appendDecimal(){
+function inputDecimal(){
   resetCalculatorError();
 
   if(calculatorState.shouldReset){
@@ -306,7 +291,7 @@ function power(){
 
 numberButtons.forEach((button) =>{
   button.addEventListener("click", () =>{
-    appendNumber(button.textContent);
+    inputNumber(button.textContent);
   });
 });
 
@@ -320,15 +305,15 @@ equalsButton.addEventListener("click", equals);
 clearAllButton.addEventListener("click", clearAll);
 clearButton.addEventListener("click", clearCurrent);
 backspaceButton.addEventListener("click", backspace);
-decimalButton.addEventListener("click", appendDecimal);
+decimalButton.addEventListener("click", inputDecimal);
 percentButton.addEventListener("click", percent);
 inverseButton.addEventListener("click", inverse);
 sqrtButton.addEventListener("click", sqrt);
 powerButton.addEventListener("click", power);
 
 document.addEventListener("keydown", (e) => {
-  if(e.key >= "0" && e.key <= "9") appendNumber(e.key);
-  else if(e.key === ".") appendDecimal();
+  if(e.key >= "0" && e.key <= "9") inputNumber(e.key);
+  else if(e.key === ".") inputDecimal();
   else if(e.key === "+" || e.key === "-" || e.key === "*" || e.key === "/") chooseOperator(e.key);
   else if(e.key === "Enter" || e.key === "=") equals();
   else if(e.key === "Backspace") backspace();
