@@ -95,7 +95,7 @@ body{
   transform: translateY(2px);
 }
 
-.btn:hover {
+.btn:hover{
   cursor: pointer;
 }
 

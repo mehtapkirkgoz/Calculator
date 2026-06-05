@@ -12,13 +12,16 @@ const backspaceButton = document.querySelector(".backspace");
 const decimalButton = document.querySelector(".decimal");
 const powerButton = document.querySelector(".power");
 
-let firstValue = "";
-let secondValue = "";
-let currentOperator = null;
-let shouldReset = false;
-let current = "";
-let lastOperator = null;
-let lastSecondValue = "";
+const calculatorState = {
+  firstValue : "",
+  secondValue : "",
+  currentOperator : null,
+  shouldReset : false,
+  current : "",
+  lastOperator : null,
+  lastSecondValue : "",
+  maxLength : 15
+};
 
 function add(a, b){
   return a + b;
@@ -68,23 +71,23 @@ function operate(a, operator, b){
   }
 
   if(result === "Error"){
-    return "Error";
+    return result;
   }
 
   return roundResult(result);
 }
 
 function updateDisplay(){
-  displayCurrent.textContent = current || "0";
+  displayCurrent.textContent = calculatorState.current || 0;
 }
 
 function resetCalculatorError(){
-  if(current === "Error") {
-    current = "";
-    firstValue = "";
-    secondValue = "";
-    currentOperator = null;
-    shouldReset = false;
+  if(calculatorState.current === "Error"){
+    calculatorState.current = 0;
+    calculatorState.firstValue = 0;
+    calculatorState.secondValue = 0;
+    calculatorState.currentOperator = null;
+    calculatorState.shouldReset = false;
     displayControls.textContent = "";
   }
 }
@@ -92,17 +95,21 @@ function resetCalculatorError(){
 function appendNumber(num){
   resetCalculatorError();
 
-  if(shouldReset){
-    current = "";
-    shouldReset = false;
+  if(calculatorState.shouldReset){
+    calculatorState.current = 0;
+    calculatorState.shouldReset = false;
   }
 
-  if(current.length >= 32) return;
-
-  if(current === "0"){
-    current = num;
+  if(num == 1){
+    if(calculatorState.current.length >= 32) return;
   }else{
-    current += num;
+    if(calculatorState.current.length >= 27) return;
+  }
+
+  if(calculatorState.current === 0){
+    calculatorState.current = num;
+  }else{
+    calculatorState.current += num;
   }
 
   updateDisplay();
@@ -111,172 +118,155 @@ function appendNumber(num){
 function appendDecimal(){
   resetCalculatorError();
 
-  if(shouldReset){
-    current = "";
-    shouldReset = false;
+  if(calculatorState.shouldReset){
+    calculatorState.current = 0;
+    calculatorState.shouldReset = false;
   }
 
-  if(current.includes(".")) return;
+  if(calculatorState.current.includes(".")) return;
 
-  if(current === ""){
-    current = "0.";
+  if(calculatorState.current === 0){
+    calculatorState.current = "0.";
   }else{
-    current += ".";
+    calculatorState.current += ".";
   }
 
   updateDisplay();
 }
 
-function chooseOperator(op){
-  if(current === "Error") return;
+function chooseOperator(operator){
+  if(calculatorState.current === "Error") return;
 
-  if(current === "" && firstValue === "") return;
+  if(calculatorState.current === 0 && calculatorState.firstValue === 0) return;
 
-  if(current === "" && firstValue !== ""){
-    currentOperator = op;
-    displayControls.textContent = `${firstValue} ${currentOperator}`;
+  if(calculatorState.current === 0 && calculatorState.firstValue !== 0){
+    calculatorState.currentOperator = operator;
+    displayControls.textContent = `${calculatorState.firstValue} ${calculatorState.currentOperator}`;
     return;
   }
 
-  if(firstValue !== "" && currentOperator !== null && !shouldReset){
-    secondValue = current;
+  if(calculatorState.firstValue !== 0 && calculatorState.currentOperator !== null && !calculatorState.shouldReset){
+    calculatorState.secondValue = calculatorState.current;
 
-    let result = operate(firstValue, currentOperator, secondValue);
+    let result = operate(calculatorState.firstValue, calculatorState.currentOperator, calculatorState.secondValue);
 
     if(result === "Error"){
-      current = "Error";
-      firstValue = "";
-      secondValue = "";
-      currentOperator = null;
-      shouldReset = false;
-      displayControls.textContent = "";
+      calculatorState.current = "Error";
+      resetCalculatorError();
       updateDisplay();
       return;
     }
 
-    firstValue = result.toString();
-    current = firstValue;
+    calculatorState.firstValue = result;
+    calculatorState.current = calculatorState.firstValue;
   }else{
-    firstValue = current;
+    calculatorState.firstValue = calculatorState.current;
   }
 
-  currentOperator = op;
-  displayControls.textContent = `${firstValue} ${currentOperator}`;
-  shouldReset = true;
+  calculatorState.currentOperator = operator;
+  displayControls.textContent = `${calculatorState.firstValue} ${calculatorState.currentOperator}`;
+  calculatorState.shouldReset = true;
 
   updateDisplay();
 }
 
 function equals(){
-  if(current === "Error") return;
+  if(calculatorState.current === "Error") return;
 
-  if(firstValue === "" && lastOperator !== null){
-    firstValue = current;
-    currentOperator = lastOperator;
-    secondValue = lastSecondValue;
-  } else {
-    if(firstValue === "" || currentOperator === null) return;
-    secondValue = current;
+  if(calculatorState.firstValue === 0 && calculatorState.lastOperator !== null){
+    calculatorState.firstValue = calculatorState.current;
+    calculatorState.currentOperator = calculatorState.lastOperator;
+    calculatorState.secondValue = calculatorState.lastSecondValue;
+  }else{
+    if(calculatorState.firstValue === 0 || calculatorState.currentOperator === null) return;
+    calculatorState.secondValue = calculatorState.current;
   }
 
-  lastOperator = currentOperator;
-  lastSecondValue = secondValue;
+  calculatorState.lastOperator = calculatorState.currentOperator;
+  calculatorState.lastSecondValue = calculatorState.secondValue;
 
-  let result = operate(firstValue, currentOperator, secondValue);
+  let result = operate(calculatorState.firstValue, calculatorState.currentOperator, calculatorState.secondValue);
 
-  displayControls.textContent = `${firstValue} ${currentOperator} ${secondValue} =`;
+  displayControls.textContent = `${calculatorState.firstValue} ${calculatorState.currentOperator} ${calculatorState.secondValue} =`;
 
   if(result === "Error"){
-    current = "Error";
-    firstValue = "";
-    secondValue = "";
-    currentOperator = null;
-    shouldReset = false;
+    calculatorState.current = "Error";
+    resetCalculatorError();
     updateDisplay();
     return;
   }
 
-  current = result.toString();
-  firstValue = "";
-  currentOperator = null;
-  shouldReset = true;
+  calculatorState.current = result;
+  calculatorState.firstValue = 0;
+  calculatorState.currentOperator = null;
+  calculatorState.shouldReset = true;
 
   updateDisplay();
 }
 
 function clearAll(){
-  firstValue = "";
-  secondValue = "";
-  current = "";
-  currentOperator = null;
-  shouldReset = false;
-  lastOperator = null;
-  lastSecondValue = "";
-
-  displayControls.textContent = "";
-
+  resetCalculatorError();
   updateDisplay();
 }
 
 function clearCurrent(){
-  if(shouldReset){
-    firstValue = "";
-    currentOperator = null;
-    displayControls.textContent = "";
+  if(calculatorState.shouldReset){
+    if(calculatorState.current = calculatorState.secondValue){
+      calculatorState.current.textContent = 0;
+    }
   }
 
-  current = "";
-  shouldReset = false;
+  calculatorState.shouldReset = false;
   updateDisplay();
 }
 
 function backspace(){
-  if(current === "Error") return;
-  if(shouldReset) return;
+  if(calculatorState.current === "Error" || calculatorState.current === "Infinity") return;
+  if(calculatorState.shouldReset) return;
 
-  current = current.slice(0, -1);
+  calculatorState.current = calculatorState.current.slice(0, -1);
   updateDisplay();
 }
 
 function percent(){
-  if(current === "" || current === "Error") return;
+  if(calculatorState.current === 0 || calculatorState.current === "Error") return;
 
-  current = roundResult(Number(current) / 100).toString();
+  calculatorState.current = roundResult(Number(calculatorState.current) / 100);
   updateDisplay();
 }
 
 function inverse(){
-  if(current === "" || current === "Error") return;
+  if(calculatorState.current === 0 || calculatorState.current === "Error") return;
 
-  if(Number(current) === 0){
-    current = "Error";
-    displayControls.textContent = "";
+  if(Number(calculatorState.current) === 0){
+    calculatorState.current = "Error";
+    displayControls.textContent = 0;
     updateDisplay();
     return;
   }
 
-  current = roundResult(1 / Number(current)).toString();
+  calculatorState.current = roundResult(1 / Number(calculatorState.current));
   updateDisplay();
 }
 
 function sqrt(){
-  if(current === "" || current === "Error") return;
+  if(calculatorState.current === 0 || calculatorState.current === "Error") return;
 
-  if(Number(current) < 0){
-    current = "Error";
-    displayControls.textContent = "";
+  if(Number(calculatorState.current) < 0){
+    calculatorState.current = "Error";
+    displayControls.textContent = 0;
     updateDisplay();
     return;
   }
 
-  current = roundResult(Math.sqrt(Number(current))).toString();
+  calculatorState.current = roundResult(Math.sqrt(Number(calculatorState.current)));
   updateDisplay();
 }
 
 function power(){
-  if(current === "" || current === "Error") return;
+  if(calculatorState.current === 0 || calculatorState.current === "Error") return;
 
-  current = roundResult(Math.pow(Number(current), 2)).toString();
+  calculatorState.current = roundResult(Math.pow(Number(calculatorState.current), 2));
   updateDisplay();
 }
 
