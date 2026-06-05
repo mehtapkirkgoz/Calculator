@@ -43,6 +43,32 @@ function divide(a, b){
   return a / b;
 }
 
+function checkError(){
+  if(
+    calculatorState.current === "Error" ||
+    calculatorState.current === "Infinity" ||
+    calculatorState.current === "-Infinity" ||
+    calculatorState.current === "NaN"
+  ){
+    return true;
+  }
+
+  return false;
+}
+
+function clearError(){
+  if(checkError()){
+    calculatorState.current = "";
+    calculatorState.firstValue = "";
+    calculatorState.secondValue = "";
+    calculatorState.currentOperator = null;
+    calculatorState.shouldReset = false;
+    calculatorState.lastOperator = null;
+    calculatorState.lastSecondValue = "";
+    displayControls.textContent = "";
+  }
+}
+
 function roundResult(number){
   return Math.round(number * 100000) / 100000;
 }
