@@ -73,13 +73,17 @@ function roundResult(number){
   if(!Number.isFinite(number)){
     return "Error";
   }
-  
+
   return Math.round(number * 100000) / 100000;
 }
 
 function operate(a, operator, b){
   a = Number(a);
   b = Number(b);
+
+  if(!Number.isFinite(a) || !Number.isFinite(b)){
+    return "Error";
+  }
 
   let result;
 
