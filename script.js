@@ -18,8 +18,6 @@ const calculatorState = {
   currentOperator : null,
   shouldReset : false,
   current : "",
-  lastOperator : null,
-  lastSecondValue : "",
   maxLength : 15
 };
 
@@ -71,8 +69,6 @@ function clearError(){
     calculatorState.secondValue = "";
     calculatorState.currentOperator = null;
     calculatorState.shouldReset = false;
-    calculatorState.lastOperator = null;
-    calculatorState.lastSecondValue = "";
     displayControls.textContent = "";
   }
 }
@@ -129,8 +125,6 @@ function updateCalculator(){
   calculatorState.current = "";
   calculatorState.currentOperator = null;
   calculatorState.shouldReset = false;
-  calculatorState.lastOperator = null;
-  calculatorState.lastSecondValue = "";
 }
 
 function inputNumber(num){
@@ -185,6 +179,8 @@ function removeTrailingZeros(){
 function chooseOperator(operator){
   if(checkError()) return;
 
+  decimalButton.disabled = false;
+
   removeTrailingZeros();
 
   if(calculatorState.current === "" && calculatorState.firstValue === "") return;
@@ -227,17 +223,14 @@ function chooseOperator(operator){
 function equals(){
   if(checkError()) return;
 
-  if(calculatorState.firstValue === "" && calculatorState.lastOperator !== null){
-    calculatorState.firstValue = calculatorState.current;
-    calculatorState.currentOperator = calculatorState.lastOperator;
-    calculatorState.secondValue = calculatorState.lastSecondValue;
-  }else{
-    if(calculatorState.firstValue === "" || calculatorState.currentOperator === null) return;
-    calculatorState.secondValue = calculatorState.current;
+  if(
+  calculatorState.firstValue === "" ||
+  calculatorState.currentOperator === null
+  ){
+  return;
   }
 
-  calculatorState.lastOperator = calculatorState.currentOperator;
-  calculatorState.lastSecondValue = calculatorState.secondValue;
+  calculatorState.secondValue = calculatorState.current;
 
   let result = operate(calculatorState.firstValue, calculatorState.currentOperator, calculatorState.secondValue);
 
