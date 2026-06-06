@@ -174,9 +174,18 @@ function inputDecimal(){
   updateDisplay();
 }
 
+function removeTrailingZeros(){
+
+  if(Number(calculatorState.current) === 0){
+    calculatorState.current = "0";
+  }
+
+}
 
 function chooseOperator(operator){
   if(checkError()) return;
+
+  removeTrailingZeros();
 
   if(calculatorState.current === "" && calculatorState.firstValue === "") return;
 
