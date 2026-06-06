@@ -20,8 +20,16 @@ const calculatorState = {
   current : "",
   lastOperator : null,
   lastSecondValue : "",
-  maxLength : 28
+  maxLength : 15
 };
+
+function maxLengthControl(num){
+  if(num === "1"){
+    return 32;
+  }else{
+    return 28;
+  }
+}
 
 function add(a, b){
   return a + b;
@@ -50,7 +58,7 @@ function checkError(){
     calculatorState.current === "-Infinity" ||
     calculatorState.current === "NaN"
   ){
-    return true;
+    return "Error";
   }
 
   return false;
@@ -115,6 +123,16 @@ function updateDisplay(){
   displayCurrent.textContent = calculatorState.current || "0";
 }
 
+function updateCalculator(){
+  calculatorState.firstValue = "";
+  calculatorState.secondValue = "";
+  calculatorState.current = "";
+  calculatorState.currentOperator = null;
+  calculatorState.shouldReset = false;
+  calculatorState.lastOperator = null;
+  calculatorState.lastSecondValue = "";
+}
+
 function inputNumber(num){
   clearError();
 
@@ -123,9 +141,11 @@ function inputNumber(num){
     calculatorState.shouldReset = false;
   }
 
-  if(calculatorState.current.length >= calculatorState.maxLength) return;
+  let maxLength = maxLengthControl(num);
 
-  if(calculatorState.current === "0" && num !== "."){
+  if(calculatorState.current.length >= maxLength) return;
+
+  if(calculatorState.current === "0"){
     calculatorState.current = num;
   }else{
     calculatorState.current += num;
@@ -135,16 +155,17 @@ function inputNumber(num){
 }
 
 function inputDecimal(){
-  resetCalculatorError();
+  clearError();
+  decimalButton.disabled = true;
 
   if(calculatorState.shouldReset){
-    calculatorState.current = 0;
+    calculatorState.current = "";
     calculatorState.shouldReset = false;
   }
 
   if(calculatorState.current.includes(".")) return;
 
-  if(calculatorState.current === 0){
+  if(calculatorState.current === ""){
     calculatorState.current = "0.";
   }else{
     calculatorState.current += ".";
@@ -153,30 +174,35 @@ function inputDecimal(){
   updateDisplay();
 }
 
+
 function chooseOperator(operator){
-  if(calculatorState.current === "Error") return;
+  if(checkError()) return;
 
-  if(calculatorState.current === 0 && calculatorState.firstValue === 0) return;
+  if(calculatorState.current === "" && calculatorState.firstValue === "") return;
 
-  if(calculatorState.current === 0 && calculatorState.firstValue !== 0){
+  if(calculatorState.current === "" && calculatorState.firstValue !== ""){
     calculatorState.currentOperator = operator;
     displayControls.textContent = `${calculatorState.firstValue} ${calculatorState.currentOperator}`;
     return;
   }
 
-  if(calculatorState.firstValue !== 0 && calculatorState.currentOperator !== null && !calculatorState.shouldReset){
+  if(calculatorState.firstValue !== "" && calculatorState.currentOperator !== null && !calculatorState.shouldReset){
     calculatorState.secondValue = calculatorState.current;
 
     let result = operate(calculatorState.firstValue, calculatorState.currentOperator, calculatorState.secondValue);
 
     if(result === "Error"){
       calculatorState.current = "Error";
-      resetCalculatorError();
+      calculatorState.firstValue = "";
+      calculatorState.secondValue = "";
+      calculatorState.currentOperator = null;
+      calculatorState.shouldReset = false;
+      displayControls.textContent = "";
       updateDisplay();
       return;
     }
 
-    calculatorState.firstValue = result;
+    calculatorState.firstValue = result.toString();
     calculatorState.current = calculatorState.firstValue;
   }else{
     calculatorState.firstValue = calculatorState.current;
@@ -190,14 +216,14 @@ function chooseOperator(operator){
 }
 
 function equals(){
-  if(calculatorState.current === "Error") return;
+  if(checkError()) return;
 
-  if(calculatorState.firstValue === 0 && calculatorState.lastOperator !== null){
+  if(calculatorState.firstValue === "" && calculatorState.lastOperator !== null){
     calculatorState.firstValue = calculatorState.current;
     calculatorState.currentOperator = calculatorState.lastOperator;
     calculatorState.secondValue = calculatorState.lastSecondValue;
   }else{
-    if(calculatorState.firstValue === 0 || calculatorState.currentOperator === null) return;
+    if(calculatorState.firstValue === "" || calculatorState.currentOperator === null) return;
     calculatorState.secondValue = calculatorState.current;
   }
 
@@ -210,13 +236,16 @@ function equals(){
 
   if(result === "Error"){
     calculatorState.current = "Error";
-    resetCalculatorError();
+    calculatorState.firstValue = "";
+    calculatorState.secondValue = "";
+    calculatorState.currentOperator = null;
+    calculatorState.shouldReset = false;
     updateDisplay();
     return;
   }
 
-  calculatorState.current = result;
-  calculatorState.firstValue = 0;
+  calculatorState.current = result.toString();
+  calculatorState.firstValue = "";
   calculatorState.currentOperator = null;
   calculatorState.shouldReset = true;
 
@@ -224,68 +253,99 @@ function equals(){
 }
 
 function clearAll(){
-  resetCalculatorError();
+  updateCalculator();
+  displayControls.textContent = "";
   updateDisplay();
 }
 
 function clearCurrent(){
-  if(calculatorState.shouldReset){
-    if(calculatorState.current = calculatorState.secondValue){
-      calculatorState.current.textContent = 0;
-    }
-  }
-
+  calculatorState.current = "";
   calculatorState.shouldReset = false;
+
   updateDisplay();
 }
 
 function backspace(){
-  if(calculatorState.current === "Error" || calculatorState.current === "Infinity") return;
-  if(calculatorState.shouldReset) return;
+  if(checkError()){
+    calculatorState.current = "";
+    updateDisplay();
+    return;
+  }
+
+  if(calculatorState.shouldReset){
+    calculatorState.current = "";
+    calculatorState.shouldReset = false;
+    updateDisplay();
+    return;
+  }
 
   calculatorState.current = calculatorState.current.slice(0, -1);
   updateDisplay();
 }
 
 function percent(){
-  if(calculatorState.current === 0 || calculatorState.current === "Error") return;
+  if(calculatorState.current === "" || checkError()) return;
 
-  calculatorState.current = roundResult(Number(calculatorState.current) / 100);
+  let number = Number(calculatorState.current);
+
+  if(!Number.isFinite(number)) return;
+
+  let result = roundResult(number / 100);
+
+  calculatorState.current = result.toString();
   updateDisplay();
 }
 
 function inverse(){
-  if(calculatorState.current === 0 || calculatorState.current === "Error") return;
+  if(calculatorState.current === "" || checkError()) return;
 
-  if(Number(calculatorState.current) === 0){
+  let number = Number(calculatorState.current);
+
+  if(!Number.isFinite(number)) return;
+
+  if(number === 0){
     calculatorState.current = "Error";
-    displayControls.textContent = 0;
+    displayControls.textContent = "";
     updateDisplay();
     return;
   }
 
-  calculatorState.current = roundResult(1 / Number(calculatorState.current));
+  let result = roundResult(1 / number);
+
+  calculatorState.current = result.toString();
   updateDisplay();
 }
 
 function sqrt(){
-  if(calculatorState.current === 0 || calculatorState.current === "Error") return;
+  if(calculatorState.current === "" || checkError()) return;
 
-  if(Number(calculatorState.current) < 0){
+  let number = Number(calculatorState.current);
+
+  if(!Number.isFinite(number)) return;
+
+  if(number < 0){
     calculatorState.current = "Error";
-    displayControls.textContent = 0;
+    displayControls.textContent = "";
     updateDisplay();
     return;
   }
 
-  calculatorState.current = roundResult(Math.sqrt(Number(calculatorState.current)));
+  let result = roundResult(Math.sqrt(number));
+
+  calculatorState.current = result.toString();
   updateDisplay();
 }
 
 function power(){
-  if(calculatorState.current === 0 || calculatorState.current === "Error") return;
+  if(calculatorState.current === "" || checkError()) return;
 
-  calculatorState.current = roundResult(Math.pow(Number(calculatorState.current), 2));
+  let number = Number(calculatorState.current);
+
+  if(!Number.isFinite(number)) return;
+
+  let result = roundResult(Math.pow(number, 2));
+
+  calculatorState.current = result.toString();
   updateDisplay();
 }
 
