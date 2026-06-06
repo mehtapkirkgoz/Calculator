@@ -407,7 +407,6 @@ document.addEventListener("keydown", (e) => {
     break;
 
   default:
-
     if(e.key >= "0" && e.key <= "9"){
       inputNumber(e.key);
     }
