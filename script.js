@@ -381,13 +381,45 @@ sqrtButton.addEventListener("click", sqrt);
 powerButton.addEventListener("click", power);
 
 document.addEventListener("keydown", (e) => {
-  if(e.key >= "0" && e.key <= "9") inputNumber(e.key);
-  else if(e.key === ".") inputDecimal();
-  else if(e.key === "+" || e.key === "-" || e.key === "*" || e.key === "/") chooseOperator(e.key);
-  else if(e.key === "Enter" || e.key === "=") equals();
-  else if(e.key === "Backspace") backspace();
-  else if(e.key === "Escape") clearAll();
-  else if(e.key === "%") percent();
+  if(e.repeat) return;
+
+  switch(e.key){
+
+  case ".":
+    inputDecimal();
+    break;
+
+  case "+":
+  case "-":
+  case "*":
+  case "/":
+    chooseOperator(e.key);
+    break;
+
+  case "=":
+  case "Enter":
+    equals();
+    break;
+
+  case "Backspace":
+    backspace();
+    break;
+
+  case "Escape":
+    clearAll();
+    break;
+
+  case "%":
+    percent();
+    break;
+
+  default:
+
+    if(e.key >= "0" && e.key <= "9"){
+      inputNumber(e.key);
+    }
+
+  }
 });
 
 updateDisplay();
