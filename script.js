@@ -11,6 +11,7 @@ const clearAllButton = document.querySelector(".clear-all");
 const backspaceButton = document.querySelector(".backspace");
 const decimalButton = document.querySelector(".decimal");
 const powerButton = document.querySelector(".power");
+const allButtons = document.querySelectorAll(".btn");
 
 const calculatorState = {
   firstValue : "",
@@ -21,7 +22,7 @@ const calculatorState = {
   maxLength : 15
 };
 
-function maxLengthControl(num){
+function checkMaxLength(num){
   if(num === "1"){
     return 32;
   }else{
@@ -49,12 +50,27 @@ function divide(a, b){
   return a / b;
 }
 
+function updateDisplay(){
+  displayCurrent.textContent = calculatorState.current || "0";
+  decimalButton.disabled = calculatorState.current.includes(".");
+}
+
+function updateCalculator(){
+  calculatorState.firstValue = "";
+  calculatorState.secondValue = "";
+  calculatorState.current = "";
+  calculatorState.currentOperator = null;
+  calculatorState.shouldReset = false;
+}
+
 function checkError(){
+  const {current} = calculatorState;
+
   if(
-    calculatorState.current === "Error" ||
-    calculatorState.current === "Infinity" ||
-    calculatorState.current === "-Infinity" ||
-    calculatorState.current === "NaN"
+    current === "Error" ||
+    current === "Infinity" ||
+    current === "-Infinity" ||
+    current === "NaN"
   ){
     return "Error";
   }
@@ -64,12 +80,23 @@ function checkError(){
 
 function clearError(){
   if(checkError()){
-    calculatorState.current = "";
-    calculatorState.firstValue = "";
-    calculatorState.secondValue = "";
-    calculatorState.currentOperator = null;
-    calculatorState.shouldReset = false;
+    updateCalculator();
     displayControls.textContent = "";
+  }
+}
+
+function setError(){
+  calculatorState.current = "Error";
+  calculatorState.firstValue = "";
+  calculatorState.secondValue = "";
+  calculatorState.currentOperator = null;
+  calculatorState.shouldReset = false;
+}
+
+function handleReset(){
+  if(calculatorState.shouldReset){
+    calculatorState.current = "";
+    calculatorState.shouldReset = false;
   }
 }
 
@@ -115,27 +142,11 @@ function operate(a, operator, b){
   return roundResult(result);
 }
 
-function updateDisplay(){
-  displayCurrent.textContent = calculatorState.current || "0";
-}
-
-function updateCalculator(){
-  calculatorState.firstValue = "";
-  calculatorState.secondValue = "";
-  calculatorState.current = "";
-  calculatorState.currentOperator = null;
-  calculatorState.shouldReset = false;
-}
-
-function inputNumber(num){
+function appendDigit(num){
   clearError();
+  handleReset();
 
-  if(calculatorState.shouldReset){
-    calculatorState.current = "";
-    calculatorState.shouldReset = false;
-  }
-
-  let maxLength = maxLengthControl(num);
+  let maxLength = checkMaxLength(num);
 
   if(calculatorState.current.length >= maxLength) return;
 
@@ -148,16 +159,9 @@ function inputNumber(num){
   updateDisplay();
 }
 
-function inputDecimal(){
+function appendDecimal(){
   clearError();
-  decimalButton.disabled = true;
-
-  if(calculatorState.shouldReset){
-    calculatorState.current = "";
-    calculatorState.shouldReset = false;
-  }
-
-  if(calculatorState.current.includes(".")) return;
+  handleReset();
 
   if(calculatorState.current === ""){
     calculatorState.current = "0.";
@@ -169,17 +173,18 @@ function inputDecimal(){
 }
 
 function removeTrailingZeros(){
-
   if(Number(calculatorState.current) === 0){
     calculatorState.current = "0";
   }
+}
 
+function calculate(){
+  calculatorState.secondValue = calculatorState.current;
+  return operate(calculatorState.firstValue, calculatorState.currentOperator, calculatorState.secondValue);
 }
 
 function chooseOperator(operator){
   if(checkError()) return;
-
-  decimalButton.disabled = false;
 
   removeTrailingZeros();
 
@@ -194,14 +199,10 @@ function chooseOperator(operator){
   if(calculatorState.firstValue !== "" && calculatorState.currentOperator !== null && !calculatorState.shouldReset){
     calculatorState.secondValue = calculatorState.current;
 
-    let result = operate(calculatorState.firstValue, calculatorState.currentOperator, calculatorState.secondValue);
+    let result = calculate();
 
     if(result === "Error"){
-      calculatorState.current = "Error";
-      calculatorState.firstValue = "";
-      calculatorState.secondValue = "";
-      calculatorState.currentOperator = null;
-      calculatorState.shouldReset = false;
+      setError();
       displayControls.textContent = "";
       updateDisplay();
       return;
@@ -223,25 +224,17 @@ function chooseOperator(operator){
 function equals(){
   if(checkError()) return;
 
-  if(
-  calculatorState.firstValue === "" ||
-  calculatorState.currentOperator === null
+  if(calculatorState.firstValue === "" || calculatorState.currentOperator === null
   ){
   return;
   }
 
-  calculatorState.secondValue = calculatorState.current;
-
-  let result = operate(calculatorState.firstValue, calculatorState.currentOperator, calculatorState.secondValue);
+  let result = calculate();
 
   displayControls.textContent = `${calculatorState.firstValue} ${calculatorState.currentOperator} ${calculatorState.secondValue} =`;
 
   if(result === "Error"){
-    calculatorState.current = "Error";
-    calculatorState.firstValue = "";
-    calculatorState.secondValue = "";
-    calculatorState.currentOperator = null;
-    calculatorState.shouldReset = false;
+    setError();
     updateDisplay();
     return;
   }
@@ -353,7 +346,7 @@ function power(){
 
 numberButtons.forEach((button) =>{
   button.addEventListener("click", () =>{
-    inputNumber(button.textContent);
+    appendDigit(button.textContent);
   });
 });
 
@@ -367,11 +360,15 @@ equalsButton.addEventListener("click", equals);
 clearAllButton.addEventListener("click", clearAll);
 clearButton.addEventListener("click", clearCurrent);
 backspaceButton.addEventListener("click", backspace);
-decimalButton.addEventListener("click", inputDecimal);
+decimalButton.addEventListener("click", appendDecimal);
 percentButton.addEventListener("click", percent);
 inverseButton.addEventListener("click", inverse);
 sqrtButton.addEventListener("click", sqrt);
 powerButton.addEventListener("click", power);
+
+allButtons.forEach((button) =>{
+  button.addEventListener("mousedown", (e) => e.preventDefault());
+});
 
 document.addEventListener("keydown", (e) => {
   if(e.repeat) return;
@@ -379,7 +376,7 @@ document.addEventListener("keydown", (e) => {
   switch(e.key){
 
   case ".":
-    inputDecimal();
+    appendDecimal();
     break;
 
   case "+":
@@ -408,7 +405,7 @@ document.addEventListener("keydown", (e) => {
 
   default:
     if(e.key >= "0" && e.key <= "9"){
-      inputNumber(e.key);
+      appendDigit(e.key);
     }
 
   }
