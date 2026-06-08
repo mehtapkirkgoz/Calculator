@@ -52,7 +52,7 @@ function divide(a, b){
 
 function updateDisplay(){
   displayCurrent.textContent = calculatorState.current || "0";
-  decimalButton.disabled = calculatorState.current.includes(".");
+   decimalButton.disabled = calculatorState.current.includes(".");
 }
 
 function updateCalculator(){
@@ -85,7 +85,7 @@ function clearError(){
   }
 }
 
-function setError(){
+function isError(){
   calculatorState.current = "Error";
   calculatorState.firstValue = "";
   calculatorState.secondValue = "";
@@ -161,7 +161,10 @@ function appendDigit(num){
 
 function appendDecimal(){
   clearError();
+  decimalButton.disabled = true;
   handleReset();
+
+  if(calculatorState.current.includes(".")) return;
 
   if(calculatorState.current === ""){
     calculatorState.current = "0.";
@@ -186,6 +189,8 @@ function calculate(){
 function chooseOperator(operator){
   if(checkError()) return;
 
+  decimalButton.disabled = false;
+
   removeTrailingZeros();
 
   if(calculatorState.current === "" && calculatorState.firstValue === "") return;
@@ -202,7 +207,7 @@ function chooseOperator(operator){
     let result = calculate();
 
     if(result === "Error"){
-      setError();
+      isError();
       displayControls.textContent = "";
       updateDisplay();
       return;
@@ -234,7 +239,7 @@ function equals(){
   displayControls.textContent = `${calculatorState.firstValue} ${calculatorState.currentOperator} ${calculatorState.secondValue} =`;
 
   if(result === "Error"){
-    setError();
+    isError();
     updateDisplay();
     return;
   }
